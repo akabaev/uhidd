@@ -43,8 +43,10 @@ extern int yyparse(void);
 extern int lineno;
 extern FILE *yyin;
 
-static void config_add_keymap_entry(char *usage, char *hex);
-static void config_add_keymap_entry_val(int i, char *hex);
+static void config_add_cc_keymap_entry(char *usage, char *hex);
+static void config_add_cc_keymap_entry_val(int i, char *hex);
+static void config_add_sc_keymap_entry(char *usage, char *hex);
+static void config_add_sc_keymap_entry_val(int i, char *hex);
 
 const char *config_file = "/usr/local/etc/uhidd.conf";
 struct uhidd_config uconfig;
@@ -64,6 +66,7 @@ static struct device_config dconfig, *dconfig_p;
 %token T_VHID_DEVNAME
 %token T_CC_ATTACH
 %token T_CC_KEYMAP
+%token T_SC_KEYMAP
 %token T_HIDACTION
 %token T_DETACHKERNELDRIVER
 %token T_FORCED_ATTACH
@@ -147,6 +150,7 @@ conf_entry
 	| kbd_attach
 	| cc_attach
 	| cc_keymap
+	| sc_keymap
 	| vhid_attach
 	| vhid_strip_id
 	| vhid_devname
@@ -213,10 +217,30 @@ cc_keymap_entry_list
 
 cc_keymap_entry
 	: T_USAGE "=" T_STRING {
-		config_add_keymap_entry($1, $3);
+		config_add_cc_keymap_entry($1, $3);
 	}
 	| T_HEX "=" T_STRING {
-		config_add_keymap_entry_val($1, $3);
+		config_add_cc_keymap_entry_val($1, $3);
+	}
+	;
+
+sc_keymap
+	: T_SC_KEYMAP "=" "{" sc_keymap_entry_list "}" {
+		dconfig.sc_keymap_set = 1;
+	}
+	;
+
+sc_keymap_entry_list
+	: sc_keymap_entry
+	| sc_keymap_entry_list sc_keymap_entry
+	;
+
+sc_keymap_entry
+	: T_USAGE "=" T_STRING {
+		config_add_sc_keymap_entry($1, $3);
+	}
+	| T_HEX "=" T_STRING {
+		config_add_sc_keymap_entry_val($1, $3);
 	}
 	;
 
@@ -317,7 +341,7 @@ yyerror(const char *s)
 }
 
 static void
-config_add_keymap_entry(char *usage, char *hex)
+config_add_cc_keymap_entry(char *usage, char *hex)
 {
 	int i, value;
 
@@ -335,7 +359,7 @@ config_add_keymap_entry(char *usage, char *hex)
 }
 
 static void
-config_add_keymap_entry_val(int i, char *hex)
+config_add_cc_keymap_entry_val(int i, char *hex)
 {
 	int value;
 
@@ -344,6 +368,36 @@ config_add_keymap_entry_val(int i, char *hex)
 		return;
 	if (i < _MAX_MM_KEY)
 		dconfig.cc_keymap[i] = value;
+}
+
+static void
+config_add_sc_keymap_entry(char *usage, char *hex)
+{
+	int i, value;
+
+	if (!strcasecmp(usage, "Reserved"))
+		return;
+	value = strtoul(hex, NULL, 16);
+	if (value > 127)
+		return;
+	for (i = 0; i < usage_system_num; i++) {
+		if (!strcasecmp(usage, usage_system[i])) {
+			dconfig.sc_keymap[i] = value;
+			break;
+		}
+	}
+}
+
+static void
+config_add_sc_keymap_entry_val(int i, char *hex)
+{
+	int value;
+
+	value = strtoul(hex, NULL, 16);
+	if (value > 127)
+		return;
+	if (i < _MAX_MM_KEY)
+		dconfig.sc_keymap[i] = value;
 }
 
 void

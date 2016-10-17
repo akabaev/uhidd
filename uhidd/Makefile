@@ -12,7 +12,7 @@ SRCS=	uhidd.c uhidd_vhid_cuse.c uhidd_hidcore.c uhidd_hidump.c uhidd_kbd.c \
 	uhidd_cc.c lex.l uhidd_mouse.c parser.y y.tab.h usage_in_page.c \
 	usage_page.c uhidd_drivers.c uhidd_hidaction.c uhidd_cuse4bsd.c \
 	uhidd_evdev.c uhidd_evdev_utils.c usage_consumer.c lex.kbdmap.c \
-	drv_microsoft.c
+	drv_microsoft.c uhidd_sc.c usage_system.c
 
 GENSRCS=	usage_in_page.c usage_page.c lex.kbdmap.c
 CLEANFILES=	${GENSRCS}

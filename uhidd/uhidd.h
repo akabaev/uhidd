@@ -152,6 +152,8 @@
 #define	HUG_AC_FORWARDMSG		0x028B
 #define	HUG_AC_SEND			0x028C
 
+#define	HUG_SYSTEM_CONTROL		0x0080
+
 /*
  * HID Main item kind.
  */
@@ -302,6 +304,8 @@ struct device_config {
 	enum attach_mode cc_attach;
 	uint8_t cc_keymap_set;
 	uint8_t cc_keymap[_MAX_MM_KEY];
+	uint8_t sc_keymap_set;
+	uint8_t sc_keymap[_MAX_MM_KEY];
 	int8_t detach_kernel_driver;
 	int8_t forced_attach;
 	int8_t vhid_strip_id;
@@ -343,6 +347,7 @@ struct hid_interface {
 	uint8_t				 ep;
 	int				 pkt_sz;
 	uint8_t				 cc_keymap[_MAX_MM_KEY];
+	uint8_t				 sc_keymap[_MAX_MM_KEY];
 	int				 free_key_pos;
 	pthread_t			 thread;
 	int (*cc_recv_filter)(struct hid_appcol *, unsigned, int, unsigned *,
@@ -419,6 +424,8 @@ extern struct device_config clconfig;
 extern const char *config_file;
 extern int usage_consumer_num;
 extern const char **usage_consumer;
+extern int usage_system_num;
+extern const char **usage_system;
 extern const int hid_appcol_driver_num;
 extern const int hid_interface_driver_num;
 extern struct hid_appcol_driver hid_appcol_driver_list[];
@@ -431,6 +438,9 @@ extern struct hid_interface_driver hid_interface_driver_list[];
 int		cc_match(struct hid_appcol *);
 int		cc_attach(struct hid_appcol *);
 void		cc_recv(struct hid_appcol *, struct hid_report *);
+int		sc_match(struct hid_appcol *);
+int		sc_attach(struct hid_appcol *);
+void		sc_recv(struct hid_appcol *, struct hid_report *);
 void		dump_report_desc(unsigned char *, int);
 void		hexdump_report_desc(unsigned char *, int);
 struct hid_parser *hid_parser_alloc(unsigned char *, int, void *);

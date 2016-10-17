@@ -756,6 +756,8 @@ kbd_attach(struct hid_appcol *ha)
 	assert(drv_name != NULL);
 	if (strcmp(drv_name, "cc") == 0)
 		mode = config_cc_attach(hi);
+	else if (strcmp(drv_name, "sc") == 0)
+		mode = config_cc_attach(hi);
 	else
 		mode = config_kbd_attach(hi);
 	assert(mode > ATTACH_NO);

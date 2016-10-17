@@ -65,6 +65,15 @@ struct hid_appcol_driver hid_appcol_driver_list[] = {
 		cc_attach,
 		cc_recv,
 		NULL,
+	},
+
+	/* General System Control Driver. */
+	{
+		"sc",
+		sc_match,
+		sc_attach,
+		sc_recv,
+		NULL,
 	}
 };
 

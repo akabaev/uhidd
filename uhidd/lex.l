@@ -54,6 +54,7 @@ vhid_strip_id		{ return (T_VHID_STRIP_REPORT_ID); }
 vhid_devname		{ return (T_VHID_DEVNAME); }
 cc_attach		{ return (T_CC_ATTACH); }
 cc_keymap		{ return (T_CC_KEYMAP); }
+sc_keymap		{ return (T_SC_KEYMAP); }
 hidaction		{ return (T_HIDACTION); }
 detach_kernel_driver	{ return (T_DETACHKERNELDRIVER); }
 forced_attach		{ return (T_FORCED_ATTACH); }
